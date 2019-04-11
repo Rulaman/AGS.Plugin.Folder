@@ -65,7 +65,7 @@
 			}
 			else
 			{
-				HandleDirectory(GameDir, true);
+				HandleDirectory(GameDir, false);
 			}
 		}
 
