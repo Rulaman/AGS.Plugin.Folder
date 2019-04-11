@@ -1,0 +1,11 @@
+Usage
+=====
+
+Copy the Plugin (and the icon) in the AGS program folder.
+Start AGS and double klick (after loading a game) on the entry 'Folder settings'.
+
+Select the path for the icon (Load)
+Type in a comment if you want
+check the box (Use decoration)
+
+Now check the explorer folder. It has an icon.
