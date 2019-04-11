@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{B1526271-4DAE-4876-8124-E3B818DE280C}</ProjectGuid>
     <OutputType>Library</OutputType>
-    <RootNamespace>AGS.Plugin.Folder</RootNamespace>
+    <RootNamespace>AGSPlugin.Folder</RootNamespace>
     <AssemblyName>AGS.Plugin.Folder</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
