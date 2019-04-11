@@ -1,11 +1,11 @@
 ﻿using System.Reflection;
 using System.Runtime.InteropServices;
 
-[assembly: AssemblyTitle("AGS.Plugin.Folder")]
+[assembly: AssemblyTitle("AGSPlugin.Folder")]
 [assembly: AssemblyDescription("Folder settings for AGS projects")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Rulaman")]
-[assembly: AssemblyProduct("AGS.Plugin.Folder")]
+[assembly: AssemblyProduct("AGSPlugin.Folder")]
 [assembly: AssemblyCopyright("Copyright © 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

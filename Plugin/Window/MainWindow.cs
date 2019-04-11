@@ -1,10 +1,25 @@
-﻿namespace AGS.Plugin.Folder
+﻿namespace AGSPlugin.Folder
 {
-	public partial class MainWindow : Types.EditorContentPanel
+	public partial class MainWindow : AGS.Types.EditorContentPanel, System.ComponentModel.INotifyPropertyChanged
 	{
-		public string GameDir = string.Empty;
-		public string FilePathIcon = string.Empty;
-		public bool Enable = false;
+		private string _GameDir = string.Empty;
+		public string GameDir { get { return _GameDir; } set { CheckSetAndSend(ref _GameDir, value); } }
+
+
+		private string _FilePathIcon = string.Empty;
+		public string FilePathIcon { get { return _FilePathIcon; } set { CheckSetAndSend(ref _FilePathIcon, value); } }
+
+
+		private bool _Enable = false;
+		public bool Enable { get { return _Enable; } set { CheckSetAndSend(ref _Enable, value); } }
+
+
+		private System.DateTime _DT = System.DateTime.Now;
+		public System.DateTime DT { get { return _DT; } set { CheckSetAndSend(ref _DT, value); } }
+
+
+		private string _Comment = string.Empty;
+		public string Comment { get { return _Comment; } set { CheckSetAndSend(ref _Comment, value); } }
 
 
 		private string DesktopIni = "desktop.ini";
@@ -12,6 +27,15 @@
 		public MainWindow()
 		{
 			InitializeComponent();
+
+			System.Windows.Forms.Binding bindE = new System.Windows.Forms.Binding("Checked", this, nameof(Enable), false, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged);
+			chkDecoration.DataBindings.Add(bindE);
+
+			System.Windows.Forms.Binding bindC = new System.Windows.Forms.Binding("Text", this, nameof(Comment), false, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged);
+			txtComment.DataBindings.Add(bindC);
+
+			System.Windows.Forms.Binding bindF = new System.Windows.Forms.Binding("Text", this, nameof(FilePathIcon), false, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged);
+			txtPath.DataBindings.Add(bindF);
 		}
 
 		private void Decoration_CheckedChanged(object sender, System.EventArgs e)
@@ -58,6 +82,7 @@
 
 			HandleDesktopIni(iconName, GameDir, txtComment.Text);
 			CopyIcon(GameDir, txtPath.Text, iconName);
+			Comment = txtComment.Text;
 
 			if ( chkDecoration.Checked )
 			{
@@ -115,10 +140,44 @@
 
 		private void CopyIcon(string gameDir, string iconFilePath, string iconFileName)
 		{
-			if ( !System.IO.File.Exists(System.IO.Path.Combine(gameDir, iconFileName)) )
+			string fpi = System.IO.Path.Combine(gameDir, iconFileName);
+
+			if ( !System.IO.File.Exists(fpi) )
 			{
-				System.IO.File.Copy(iconFilePath, System.IO.Path.Combine(gameDir, iconFileName));
+				System.IO.File.Copy(iconFilePath, fpi);
+			}
+
+			FilePathIcon = fpi;
+		}
+
+		#region INotifyPropertyChanged Members
+
+		public new event System.ComponentModel.PropertyChangedEventHandler PropertyChanged;
+
+		protected virtual void OnPropertyChanged(string propertyName)
+		{
+			System.ComponentModel.PropertyChangedEventHandler handler = PropertyChanged;
+
+			if ( handler != null )
+			{
+				handler(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
 			}
 		}
+
+		protected bool CheckSetAndSend<T>(ref T field, T value, [System.Runtime.CompilerServices.CallerMemberName] string propertyName = null)
+		{
+			if ( System.Collections.Generic.EqualityComparer<T>.Default.Equals(field, value) )
+			{
+				return false;
+			}
+
+			field = value;
+
+			OnPropertyChanged(propertyName);
+
+			return true;
+		}
+
+		#endregion INotifyPropertyChanged Members
 	}
 }

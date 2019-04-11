@@ -1,4 +1,4 @@
-﻿namespace AGS.Plugin.Folder
+﻿namespace AGSPlugin.Folder
 {
 	partial class MainWindow
 	{

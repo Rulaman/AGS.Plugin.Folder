@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using AGS.Types;
 
 
-namespace AGS.Plugin.Folder
+namespace AGSPlugin.Folder
 {
 	[RequiredAGSVersion("3.5.0.0")]
 	public class PluginLoader : IAGSEditorPlugin
@@ -18,8 +18,21 @@ namespace AGS.Plugin.Folder
 		}
 	}
 
+	public static class Common
+	{
+
+		static Common()
+		{
+
+		}
+	}
+
+
 	public class Component : IEditorComponent
 	{
+		public string DateTimeFormatString = "yyyy.MM.dd HH:mm:ss,fff";
+		public System.Globalization.NumberFormatInfo Nfi;
+
 		private const string COMPONENT_ID = "PluginFolder";
 		private const string COMPONENT_MENU_COMMAND = "PluginFolderMenuCommand";
 		private const string CONTROL_ID_ROOT_NODE = "PluginFolderRoot";
@@ -48,6 +61,10 @@ namespace AGS.Plugin.Folder
 			{
 				Window = Window ?? new MainWindow();
 				WindowPanel = new ContentDocument(Window, "Folder settings", this, ICON_NAME);
+
+				Nfi = new System.Globalization.NumberFormatInfo();
+				Nfi.NumberDecimalDigits = 2;
+				Nfi.NumberDecimalSeparator = ".";
 			}
 			catch { }
 		}
@@ -80,18 +97,65 @@ namespace AGS.Plugin.Folder
 			};
 		}
 
-		void IEditorComponent.PropertyChanged(string propertyName, object oldValue) { }
+		void IEditorComponent.PropertyChanged(string propertyName, object oldValue)
+		{
+		}
+
 		void IEditorComponent.BeforeSaveGame()
 		{
-
 		}
+
 		void IEditorComponent.RefreshDataFromGame()
 		{
 			Window.GameDir = LocalEditor.CurrentGame.DirectoryPath;
 		}
-		void IEditorComponent.GameSettingsChanged() { }
-		void IEditorComponent.ToXml(System.Xml.XmlTextWriter writer) { }
-		void IEditorComponent.FromXml(System.Xml.XmlNode node) { }
+
+		void IEditorComponent.GameSettingsChanged()
+		{
+		}
+
+		void IEditorComponent.ToXml(System.Xml.XmlTextWriter writer)
+		{
+			writer.WriteStartElement("FolderIcon");
+
+			writer.WriteStartElement("Enable");
+			writer.WriteString(Window.Enable.ToString());
+			writer.WriteEndElement();
+
+			writer.WriteStartElement("Comment");
+			writer.WriteString(Window.Comment);
+			writer.WriteEndElement();
+
+			writer.WriteStartElement("Date");
+			writer.WriteString(DateTime.Now.ToString(DateTimeFormatString));
+			writer.WriteEndElement();
+
+			writer.WriteStartElement("IconPath");
+			writer.WriteString(Window.FilePathIcon);
+			writer.WriteEndElement();
+
+
+			writer.WriteEndElement();
+		}
+
+		void IEditorComponent.FromXml(System.Xml.XmlNode node)
+		{
+			if ( null != node && node.InnerText != string.Empty)
+			{
+				try { if ( bool.TryParse(node.SelectSingleNode("FolderIcon/Enable").InnerText, out bool b) ) { Window.Enable = b; } }
+				catch { }
+
+				try { Window.DT = DateTime.ParseExact(node.SelectSingleNode("FolderIcon/Date").InnerText, DateTimeFormatString, Nfi, System.Globalization.DateTimeStyles.AssumeLocal); }
+				catch { }
+
+				try { Window.Comment = node.SelectSingleNode("FolderIcon/Comment").InnerText; }
+				catch { }
+
+				try { Window.FilePathIcon = node.SelectSingleNode("FolderIcon/IconPath").InnerText; }
+				catch { }
+			}
+		}
+
 		void IEditorComponent.EditorShutdown() { }
 	}
 }
